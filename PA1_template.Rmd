@@ -1,12 +1,24 @@
-# Reproducible Research: Peer Assessment 1
+PeerAssessment1
+========================================================
 
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages (click the **Help** toolbar button for more details on using R Markdown).
 
-## Loading and preprocessing the data
+When you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+echo = TRUE
+##Loading and preprocessing the data
+
 data <- read.csv("./activity.csv", sep = ",", header = TRUE, na.strings = "NA")
 nrow(data)
 
-## What is mean total number of steps taken per day?
+```
 
+You can also embed plots, for example:
+
+```{r}
+echo = TRUE
+##What is mean total number of steps taken per day?
 dc <- data[complete.cases(data),]
 td <- aggregate(dc[, 1], by=list(Category=dc[, 2]), FUN=sum)
 td
@@ -18,26 +30,24 @@ aggregate(dc[, 1], by=list(Category=dc[, 2]), FUN=mean)
 mean(td[, 2])
 aggregate(dc[, 1], by=list(Category=dc[, 2]), FUN=median)
 median(td[, 2])
+```
 
-
-
-## What is the average daily activity pattern?
-
+```{r}
+echo = TRUE
+##What is the average daily activity pattern?
+days <- unique(data[, 2])
+y2 <- 0:287
 ave_steps <- aggregate(dc[, 1], by=list(Category=dc[, 3]), FUN=mean)
 plot(ave_steps[, 2], type = "l", axes= F, ylab = "steps", xlab= "", main="Average steps of 5-minute interval across all days", col="lightgreen")
-
-
-days <- unique(data[, 2])
-plot(data[, 1], type = "l", axes= F, ylab = "steps", xlab= "", main="Average steps of 5-minute interval across all days", col="lightgreen")
 axis(side = 2)
-y2 <- 0:287
 axis(side=1, at = y2,  labels = ave_steps[, 1])
 ave_steps[ave_steps[, 2] == max(ave_steps[, 2]), ]
 
+```
 
-
-## Imputing missing values
-
+```{r}
+echo = TRUE
+##Imputing missing values
 nrow(data[data[, 1] == "NA", ])
 
 range1 <- nrow(data)
@@ -63,8 +73,11 @@ aggregate(data[, 1], by=list(Category=data[, 2]), FUN=median)
 median(td2[, 2])
 
 
+```
 
-## Are there differences in activity patterns between weekdays and weekends?
+```{r}
+echo = TRUE
+##Are there differences in activity patterns between weekdays and weekends?
 
 Sys.setlocale(category="LC_TIME", "C")
 data["weekdays"] <- NA
@@ -100,5 +113,4 @@ axis(side = 2)
 axis(side = 1)
 box(lty = "solid", col = 'black')
 
-
-
+```
