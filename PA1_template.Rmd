@@ -2,19 +2,103 @@
 
 
 ## Loading and preprocessing the data
-
-
+data <- read.csv("./activity.csv", sep = ",", header = TRUE, na.strings = "NA")
+nrow(data)
 
 ## What is mean total number of steps taken per day?
+
+dc <- data[complete.cases(data),]
+td <- aggregate(dc[, 1], by=list(Category=dc[, 2]), FUN=sum)
+td
+y <- 0:(nrow(td) -1)
+plot(td[, 2], type = "h", axes = F, ylab = " total steps per day", xlab= "", main="Total steps each day", lwd = 7, col="lightgreen", lend="square")
+axis(side = 2)
+axis(side=1, at = y,  labels = td[, 1])
+aggregate(dc[, 1], by=list(Category=dc[, 2]), FUN=mean)
+mean(td[, 2])
+aggregate(dc[, 1], by=list(Category=dc[, 2]), FUN=median)
+median(td[, 2])
 
 
 
 ## What is the average daily activity pattern?
 
+ave_steps <- aggregate(dc[, 1], by=list(Category=dc[, 3]), FUN=mean)
+plot(ave_steps[, 2], type = "l", axes= F, ylab = "steps", xlab= "", main="Average steps of 5-minute interval across all days", col="lightgreen")
+
+
+days <- unique(data[, 2])
+plot(data[, 1], type = "l", axes= F, ylab = "steps", xlab= "", main="Average steps of 5-minute interval across all days", col="lightgreen")
+axis(side = 2)
+y2 <- 0:287
+axis(side=1, at = y2,  labels = ave_steps[, 1])
+ave_steps[ave_steps[, 2] == max(ave_steps[, 2]), ]
+
 
 
 ## Imputing missing values
 
+nrow(data[data[, 1] == "NA", ])
+
+range1 <- nrow(data)
+range1 <- 1:range1
+ 
+ for (i in range1) {
+ temp <- data[i, 1]
+ temp <- as.data.frame(temp)
+if (temp %in% "NA") {
+ t <- data[i , 3]
+ t2 <- ave_steps[ave_steps[, 1]  %in% t, ]
+ data[i ,1] <- t2[ ,2]
+ 
+ } }
+
+td2 <- aggregate(data[, 1], by=list(Category=data[, 2]), FUN=sum)
+y3 <- 0:(nrow(td2) -1)
+plot(td2[, 2], type = "h", axes = F, ylab = " total steps per day", xlab= "", main="Total steps each day", lwd = 7, col="lightgreen", lend="square")
+axis(side=1, at = y3,  labels = td2[, 1])
+aggregate(data[, 1], by=list(Category=data[, 2]), FUN=mean)
+mean(td2[, 2])
+aggregate(data[, 1], by=list(Category=data[, 2]), FUN=median)
+median(td2[, 2])
+
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Sys.setlocale(category="LC_TIME", "C")
+data["weekdays"] <- NA
+data$weekdays <- weekdays(as.Date(data[,2]))
+
+weekday <- c("Monday", "Tuesday",  "Wednesday", "Thursday" , "Friday")
+weekend <- c("Saturday", "Sunday")
+weekend <- as.matrix(weekend)
+weekday <- as.matrix(weekday)
+
+for (i in range1) {
+ temp1 <- data[i, 4]
+ temp1 <- as.character(temp1)
+if (temp1 %in% weekday) {
+  data[i ,4] <- "Weekday"
+  } 
+  if (temp1 %in% weekend) {
+  data[i ,4] <- "Weekend"
+  } 
+ }
+ 
+ unique(data[, 4])
+ 
+ data_weekday <- data[data[, 4] == "Weekday",]
+data_weekend <- data[data[, 4] == "Weekend",]
+
+par(mfrow=c(2,1))
+plot(data_weekend[, 1], type="l", main="weekend", axes= F, xlab= "", ylab= "" , col="blue")
+axis(side = 4)
+box(lty = "solid", col = 'black')
+plot(data_weekday[, 1], type="l", main="Weekday", axes= F, xlab= "Interval", ylab= "Number of steps", col = "blue" )
+axis(side = 2)
+axis(side = 1)
+box(lty = "solid", col = 'black')
+
+
+
